@@ -82,3 +82,7 @@ def get_locale():
 
 babel.init_app(app, locale_selector=get_locale)
 
+with app.app_context():
+    db.create_all()
+
+from app import routes, models, errors

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>{{ _('Произошла непредвиденная ошибка') }}</h1>
+    <p>{{ _('Администратор был уведомлен. Приносим извинения за доставленные неудобства!') }}</p>
+	<nav aria-label="...">
+        <ul class="pager">
+            <li>
+                <a href="{{ url_for('index') }}">
+                    {{ _('Вернуться на Главную') }} <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endblock %}

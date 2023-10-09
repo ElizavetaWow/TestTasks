@@ -49,3 +49,5 @@ email_validator
 guess_language-spirit
 sqlalchemy==1.4.46
 flask-ngrok
+pandas
+chardet

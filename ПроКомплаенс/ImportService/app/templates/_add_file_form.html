@@ -1,0 +1,20 @@
+<form action="" method="POST" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+    <div class="form-row">
+        <div class="form-group col-md-10 col-md-8">
+
+            <label for="formFile" class="form-label">{{form.fileContents.label}}</label>
+            {{ form.fileContents(class="form-control",id="formFile",required="required") }}
+
+            
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-10 col-md-8">
+
+            {{ form.submit(class="btn btn-primary") }}
+             <hr>
+        </div>
+    </div>
+   
+</form>

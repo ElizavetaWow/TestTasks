@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{%- block styles %}
+{{ super() }}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap.min.css" />
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+{%- endblock styles %}
+
+{% block app_content %}
+<h3>{{ 'Инструмент для работы с csv-файлами ImportService'}}</h3>
+
+<div>
+    {% include '_add_file_form.html' %}
+    
+</div>
+
+
+
+<style>
+    .chart {
+        display: flex;
+        align-items: center;
+        height: calc(100vh - 265px);
+    }
+
+    #play-pause-button {
+        margin-left: 10px;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+        border: 1px solid rgba(2, 117, 255, 1);
+        border-radius: 25px;
+        color: white;
+        background-color: rgba(2, 117, 255, 1);
+        transition: background-color 250ms;
+
+        display:inline-block;
+        margin-right:10px;
+    }
+    #play-range{
+        display:inline-block;
+        width:  calc(100% - 80px);
+    }
+
+    .fa {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transform: translate(0, 0);
+    }
+
+    #play-controls {
+        display: block;
+        max-width: 1000px;
+        margin: 1em auto;
+        max-height: 50px;
+    }
+</style>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap.min.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+
+
+
+
+
+{% endblock %}
