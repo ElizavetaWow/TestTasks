@@ -25,7 +25,7 @@ prompt-toolkit==3.0.38
 psutil==5.9.5
 pycparser==2.21
 Pygments==2.15.1
-pywin32==306
+
 pyzmq==25.0.2
 secure-smtplib==0.1.1
 threadpoolctl==3.1.0
