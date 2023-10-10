@@ -6,32 +6,34 @@ from app.emailf import send_password_reset_email
 from flask_babel import _, get_locale
 from flask_login import current_user, login_user, logout_user
 from werkzeug.urls import url_parse
-from werkzeug.utils import secure_filename
 import pandas as pd
-import chardet
+import chardet, json
 
 @app.before_request
 def before_request():
     g.locale = str(get_locale()) 
+    
+prefix = 'LKDB_'
 
 
-
-UPLOAD_FOLDER = 'static/uploads/'
 
 @app.route('/', methods = ['GET', 'POST'])
 @app.route('/index', methods = ['GET', 'POST'])
-
 def index():
-    """ dataset = {}
-    regs = Region.query.filter(Region.children == None).all()
-    regs = [Region.query.filter(Region.okato_name == 'Российская Федерация').first()]+regs
-    for reg in regs:
-        dataset[reg.okato_name] = {}
-        q = DemoInfo.query.filter(DemoInfo.type == 'все', DemoInfo.sex == 'все', DemoInfo.region_id == reg.id).all()
-        for di in q:
-            dataset[reg.okato_name][str(di.year)] = str(di.population) 
-    return render_template('index.html', title = _('ImportService'), dataset=dataset) 
-    """
+    if current_user.is_anonymous:
+        return redirect(url_for('login'))
+    if request.method == 'POST' and request.data:
+        parsed_data = json.loads(request.data.decode('utf8'))
+        if parsed_data['do'] == 'delete':
+            db.session.execute(f"Drop table '{parsed_data['tablename']}';")
+            db.session.commit()
+            db.session.execute(f"Delete from files where file_name='{parsed_data['tablename']}';")
+            db.session.commit()
+            flash('Файл успешно удалён!')
+            return redirect(url_for('index'))
+        if parsed_data['do'] == 'show':
+            return redirect(url_for("table", tablename=parsed_data['tablename']))
+
     form = AddFileForm()
     if form.validate_on_submit():
         new_file_name = form.fileContents.data.filename#.replace('.csv', '')
@@ -44,19 +46,27 @@ def index():
             encoding = chardet.detect(file_data.read())['encoding']
             file_data.seek(0)
             df = pd.read_csv(file_data, encoding=encoding)
+            if 'index' in df.columns.str.lower():
+                df.rename(columns={'index': prefix+'index', 'Index': prefix+'Index'}, inplace=True)
             df.to_sql(new_file_name, con=db.engine, if_exists = "replace")
             db.session.add(file)
             db.session.commit() 
             flash('Файл успешно загружен!')
-    
+            return redirect(url_for('index'))
+        
+    files_data = {}
     for f in Files.query.all():
-        res = db.session.execute(f"PRAGMA table_info('{f.file_name}');").all()
-        print(f.file_name)
-        for r in res[1:]:
-            print("-"+r.name)
+        column_info = db.session.execute(f"PRAGMA table_info('{f.file_name}');").all()
+        files_data[f.file_name] = [col.name.replace(prefix, '') for col in column_info[1:]]
+    return render_template('index.html', title = 'ImportService', form = form, files_data=files_data) 
 
-    return render_template('index.html', title = 'ImportService', form = form) 
 
+@app.route('/table/<tablename>', methods = ['GET'])
+def table(tablename):
+    column_info = db.session.execute(f"PRAGMA table_info('{tablename}');").all()
+    column_names = [col.name.replace(prefix, '') for col in column_info[1:]]
+    all_items = db.session.execute(f"Select * from '{tablename}';").all()
+    return render_template('table.html', title = tablename, column_names=column_names, all_items = all_items) 
 
 
 
@@ -83,9 +93,9 @@ def reset_password_request():
     if form.validate_on_submit():
         user = User.query.filter_by(email = form.email.data).first()
         if user:
-            send_password_reset_email(user)
-        flash('Проверьте свой email с дальнейшими инструкциями по сбросу пароля')
-        return redirect(url_for('login'))
+            return send_password_reset_email(user)
+        #flash('Проверьте свой email с дальнейшими инструкциями по сбросу пароля')
+        #return redirect(url_for('login'))
     return render_template('reset_password_request.html', form = form,title = 'Сброс пароля')
 
 
